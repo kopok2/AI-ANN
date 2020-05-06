@@ -22,10 +22,4 @@ def zero_initializer(rows, columns=1):
 
 
 def base_initializer(rows, columns, generator):
-    vector = []
-    for i in range(rows):
-        vector[i] = []
-        for j in range(columns):
-            vector[i][j] = generator()
-
-    return vector
+    return [[generator()] * columns] * rows
