@@ -1,15 +1,23 @@
 from random import random
 
-from functools import reduce
-from operator import add
-
 
 def mult_matr(a, b):
-    result = [[0] * len(b[0]) for _ in range(len(a))]
-    for row in range(len(b[0])):
-        for column in range(len(a)):
-            result[row][column] = reduce(add, map(lambda x: x[0] * x[1],
-                                                  zip(a[row], (b[x][column] for x in range(len(a[0]))))))
+    x = a
+    y = b
+    if not isinstance(a[0], list):
+        x = [x]
+    if not isinstance(b[0], list):
+        y = [y]
+
+    I = range(len(x))
+    J = range(len(y[0]))
+    K = range(len(x[0]))
+
+    result = [[sum([x[i][k] * y[k][j] for k in K]) for j in J] for i in I]
+
+    if len(result) == 1:
+        return [val for sublist in result for val in sublist]
+
     return result
 
 
@@ -22,10 +30,4 @@ def zero_initializer(rows, columns=1):
 
 
 def base_initializer(rows, columns, generator):
-    vector = []
-    for i in range(rows):
-        vector[i] = []
-        for j in range(columns):
-            vector[i][j] = generator()
-
-    return vector
+    return [[generator()] * columns] * rows
