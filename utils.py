@@ -1,6 +1,7 @@
 from random import random
 import math
 
+import operator
 def mult_matr(a, b):
     x = a
     y = b
@@ -37,3 +38,34 @@ def base_initializer(rows, columns, generator):
 
 def sigmoid(vec):
     return list(map(lambda x: 1 / (1 + math.exp(-x)), vec))
+
+
+def relu(vec):
+    return list(map(lambda x: max(0, x), vec))
+
+
+def sigmoidDiriv(vec):
+    sig = lambda x: (1 / (1 + math.exp(-x))) * (1 - (1 / (1 + math.exp(-x))))
+    return list(map(sig, vec))
+
+
+def reluDiriv(vec):
+    return list(map(lambda x: 1 if x > 0 else 0, vec))
+
+
+def gradientCal(layer, activation):
+    if activation == "sigmoid":
+        gradient = sigmoidDiriv(layer)
+    elif activation == "relu":
+        gradient = reluDiriv(layer)
+    else:
+        raise ValueError("Not known activation function ")
+    return gradient
+
+
+def transpoze(matrix):
+    return list(map(list, zip(*matrix)))
+
+
+def add(vec1, vec2):
+    return list(map(operator.add, vec1, vec2))

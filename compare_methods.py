@@ -38,16 +38,16 @@ def split_dataset(dataset):
 
 if __name__ == "__main__":
     df = load_dataset(verbose=VERBOSE)
-    print(df)
+    # print(df)
 
     X, y, z = split_dataset(df)
-    print(X)
-    print(z)
-    print(y)
+    # print(X)
+    # print(z)
+    #print(y)
     z = z.replace(" ", "0.0", regex=True)
     z = z.apply(pd.to_numeric)
 
-    print(z)
+    # print(z)
     X = pd.DataFrame(OneHotEncoder().fit_transform(X).toarray())
     y = pd.DataFrame(OneHotEncoder().fit_transform(np.array(y).reshape(-1, 1)).toarray()).loc[:, 1]
     X = pd.concat([X, z], axis=1)
@@ -56,17 +56,22 @@ if __name__ == "__main__":
 
     x_train, x_test, y_train, y_test = train_test_split(X, y)
 
+    print("\n\n\n")
+    print("printing x train")
+    print(x_train)
+    print("pritning test")
+    print(y_train)
     print("Training models...")
-    for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
-        print("Training " + model.__name__)
-        model_ = model()
-        model_.fit(x_train, y_train)
-        print("Evaluating model:")
-        print("Training data:")
-        print(classification_report(y_train, model_.predict(x_train)))
-        print("Confusion matrix:")
-        print(confusion_matrix(y_train, model_.predict(x_train)))
-        print("Test data:")
-        print(classification_report(y_test, model_.predict(x_test)))
-        print("Confusion matrix:")
-        print(confusion_matrix(y_test, model_.predict(x_test)))
+    # for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
+    #     print("Training " + model.__name__)
+    #     model_ = model()
+    #     model_.fit(x_train, y_train)
+    #     print("Evaluating model:")
+    #     print("Training data:")
+    #     print(classification_report(y_train, model_.predict(x_train)))
+    #     print("Confusion matrix:")
+    #     print(confusion_matrix(y_train, model_.predict(x_train)))
+    #     print("Test data:")
+    #     print(classification_report(y_test, model_.predict(x_test)))
+    #     print("Confusion matrix:")
+    #     print(confusion_matrix(y_test, model_.predict(x_test)))
