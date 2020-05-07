@@ -1,5 +1,5 @@
 from random import random
-
+import math
 
 def mult_matr(a, b):
     x = a
@@ -12,6 +12,8 @@ def mult_matr(a, b):
     I = range(len(x))
     J = range(len(y[0]))
     K = range(len(x[0]))
+    if len(x[0]) != len(y):
+        raise ValueError(f"Dim x = {len(x[0])} is not equal to {len(y)}")
 
     result = [[sum([x[i][k] * y[k][j] for k in K]) for j in J] for i in I]
 
@@ -31,3 +33,7 @@ def zero_initializer(rows, columns=1):
 
 def base_initializer(rows, columns, generator):
     return [[generator()] * columns] * rows
+
+
+def sigmoid(vec):
+    return list(map(lambda x: 1 / (1 + math.exp(-x)), vec))

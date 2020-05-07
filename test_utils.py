@@ -4,8 +4,7 @@ import numpy as np
 from utils import mult_matr
 
 
-class TestStringMethods(unittest.TestCase):
-
+class TestMethods(unittest.TestCase):
     def test_mult_mat_two_matrices(self):
         first = [[1, 2],
                  [2, 1]]
