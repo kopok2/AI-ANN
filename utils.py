@@ -32,12 +32,10 @@ def zero_initializer(rows, columns=1):
     return base_initializer(rows, columns, lambda: -1)
 
 def base_initializer(rows, columns, generator):
-    return [[generator() for i in range(columns)] for j in range(rows)]
-
+    return [[generator() * 0.001 for i in range(columns)] for j in range(rows)]
 
 def vector_initializer(size, generator):
-    return [generator() for i in range(size)]
-
+    return [generator() * 0.01 for i in range(size)]
 
 def sigmoid(vec):
     return list(map(lambda x: 1 - 1 / (1 + math.exp(x)) if x < 0 else 1 / (1 + math.exp(-x)), vec))
@@ -76,3 +74,7 @@ def updateMatrix(matrix, value):
 
 def scalarMult(vec, scalar):
     return list(map(lambda x: x * scalar, vec))
+
+
+def hardPrediction(vec):
+    return list(map(round, vec))
