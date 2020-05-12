@@ -31,27 +31,26 @@ def random_initializer(rows, columns):
 def zero_initializer(rows, columns=1):
     return base_initializer(rows, columns, lambda: -1)
 
-
 def base_initializer(rows, columns, generator):
-    return [[generator()] * columns] * rows
+    return [[generator() for i in range(columns)] for j in range(rows)]
+
+
+def vector_initializer(size, generator):
+    return [generator() for i in range(size)]
 
 
 def sigmoid(vec):
-    return list(map(lambda x: 1 / (1 + math.exp(-x)), vec))
-
+    return list(map(lambda x: 1 - 1 / (1 + math.exp(x)) if x < 0 else 1 / (1 + math.exp(-x)), vec))
 
 def relu(vec):
     return list(map(lambda x: max(0, x), vec))
-
 
 def sigmoidDiriv(vec):
     sig = lambda x: (1 / (1 + math.exp(-x))) * (1 - (1 / (1 + math.exp(-x))))
     return list(map(sig, vec))
 
-
 def reluDiriv(vec):
     return list(map(lambda x: 1 if x > 0 else 0, vec))
-
 
 def gradientCal(layer, activation):
     if activation == "sigmoid":
@@ -62,10 +61,18 @@ def gradientCal(layer, activation):
         raise ValueError("Not known activation function ")
     return gradient
 
-
 def transpoze(matrix):
     return list(map(list, zip(*matrix)))
 
-
 def add(vec1, vec2):
     return list(map(operator.add, vec1, vec2))
+
+
+def updateMatrix(matrix, value):
+    matrix = transpoze(matrix)
+    return transpoze([list(map(lambda x: x + value[i], matrix[i]))
+                      for i in range(len(matrix))])
+
+
+def scalarMult(vec, scalar):
+    return list(map(lambda x: x * scalar, vec))

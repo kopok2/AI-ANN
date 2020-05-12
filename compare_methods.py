@@ -15,7 +15,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import OneHotEncoder
-
+import ssn
 VERBOSE = True
 
 
@@ -62,6 +62,9 @@ if __name__ == "__main__":
     print("pritning test")
     print(y_train)
     print("Training models...")
+    s = ssn.SNN(2047, 1, 1000, 1000)
+    s.fit(x_train, y_train)
+
     # for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
     #     print("Training " + model.__name__)
     #     model_ = model()
