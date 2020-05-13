@@ -1,5 +1,7 @@
 .idea
 bank_clean.csv
+layer_count_test.csv
+layer_size_test.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

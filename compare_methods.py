@@ -16,7 +16,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import OneHotEncoder
 import ssn
-from utils import fibonacci_range, prep_data
+from utils import fibonacci_range, prep_data, prep_test_data_y, prep_test_data_x
 
 VERBOSE = True
 
@@ -53,28 +53,34 @@ if __name__ == "__main__":
 
     x_train, x_test, y_train, y_test = train_test_split(X, y)
 
-    print("\n\n\n")
-    print("printing x train")
-    print(x_train)
-    print("printing test")
-    print(y_train)
     print("Training models...")
 
-    big_train, big_test_onehot = prep_data(x_train, y_train)
+    ssn_y_train = prep_test_data_y(y_train)
+    ssn_y_test = prep_test_data_y(y_test)
+    ssn_x_train = prep_test_data_x(x_train)
+    ssn_x_test = prep_test_data_x(x_test)
 
-    # layer count test
+    f = open("layer_count_test.csv", "w")
+    f.write("layers,accuracy")
     for i in fibonacci_range(range(2, 15)):
-        s = ssn.SNN(len(big_train[0]), len(big_test_onehot[0]), *(100 for _ in range(i)))
-        s.fit(x_train, y_train)
-        s.predict(x_test, y_test)
+        s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), *(100 for _ in range(i)))
+        s.fit(ssn_x_train, ssn_y_train)
+        s.predict(ssn_x_test, ssn_y_test)
+        f.write(f"{i},{s.accuracy}")
 
-    # layer size test
+    f.close()
+
+    f = open("layer_size_test.csv", "w")
+    f.write("size,accuracy")
     for i in fibonacci_range(range(2, 15)):
-        s = ssn.SNN(len(big_train[0]), len(big_test_onehot[0]), i, i)
-        s.fit(x_train, y_train)
-        s.predict(x_test, y_test)
+        s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), i, i)
+        s.fit(ssn_x_train, ssn_y_train)
+        s.predict(ssn_x_test, ssn_y_test)
+        print(s.accuracy)
 
-    for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
+    f.close()
+
+    for model in (DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC):
         print("Training " + model.__name__)
         model_ = model()
         model_.fit(x_train, y_train)

@@ -15,9 +15,9 @@ class SNN(object):
     def __init__(self, input_size, output_size, *args):
         # basic parameters
         self.activation = "sigmoid"
-        self.batch = 3
-        self.learningRate = 1
-        self.epoch = 1
+        self.batch = 10
+        self.learningRate = 0.05
+        self.epoch = 5
 
         # idealization of structure
         self.hidden = list(args)
@@ -103,8 +103,6 @@ class SNN(object):
                 # reset gradients
                 self.gradient = []
                 self.delta = []
-                print(f"output = {self.output}, target = {target[i]}")
-            print(f"Epoka numer {epoch + 1}")
 
     def predict(self, test, target):
         outputvec = []
@@ -115,10 +113,9 @@ class SNN(object):
             outputvec.append(out)
             if out[0] == target[i][0]:
                 correct += 1
-            print(f"output = {out}, target = {target[i]}")
         self.accuracy = float(correct) / len(test)
-        print(f"accuracy = {self.accuracy}")
         return outputvec
+
 
 if __name__ == "__main__":
     # data prep

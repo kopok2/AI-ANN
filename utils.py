@@ -105,6 +105,16 @@ def prep_data(data):
     return data.values.tolist(), big_test_onehot
 
 
+def prep_test_data_y(test_data):
+    big_test = test_data.values.tolist()
+    return [[1, 0] if i else [0, 1] for i in big_test]
+
+
+def prep_test_data_x(test_data):
+    test_data.reset_index(drop=True, inplace=True)
+    return test_data.values.tolist()
+
+
 def fibonacci(n):
     if n < 0:
         print("Incorrect input")
