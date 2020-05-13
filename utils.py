@@ -2,6 +2,8 @@ from random import random
 import math
 
 import operator
+
+
 def mult_matr(a, b):
     x = a
     y = b
@@ -31,24 +33,31 @@ def random_initializer(rows, columns):
 def zero_initializer(rows, columns=1):
     return base_initializer(rows, columns, lambda: -1)
 
+
 def base_initializer(rows, columns, generator):
     return [[generator() * 0.001 for i in range(columns)] for j in range(rows)]
+
 
 def vector_initializer(size, generator):
     return [generator() * 0.01 for i in range(size)]
 
+
 def sigmoid(vec):
     return list(map(lambda x: 1 - 1 / (1 + math.exp(x)) if x < 0 else 1 / (1 + math.exp(-x)), vec))
 
+
 def relu(vec):
     return list(map(lambda x: max(0, x), vec))
+
 
 def sigmoidDiriv(vec):
     sig = lambda x: (1 / (1 + math.exp(-x))) * (1 - (1 / (1 + math.exp(-x))))
     return list(map(sig, vec))
 
+
 def reluDiriv(vec):
     return list(map(lambda x: 1 if x > 0 else 0, vec))
+
 
 def gradientCal(layer, activation):
     if activation == "sigmoid":
@@ -59,8 +68,10 @@ def gradientCal(layer, activation):
         raise ValueError("Not known activation function ")
     return gradient
 
+
 def transpoze(matrix):
     return list(map(list, zip(*matrix)))
+
 
 def add(vec1, vec2):
     return list(map(operator.add, vec1, vec2))
@@ -78,3 +89,35 @@ def scalarMult(vec, scalar):
 
 def hardPrediction(vec):
     return list(map(round, vec))
+
+
+def prep_data(data):
+    data.drop(columns=["Unnamed: 0"], inplace=True)
+    data.reset_index(drop=True, inplace=True)
+    big_test = data["1.1"].values.tolist()
+    big_test_onehot = []
+
+    for i in big_test:
+        if i:
+            big_test_onehot.append([1, 0])
+        else:
+            big_test_onehot.append([0, 1])
+    data.drop(columns=["1.1"], inplace=True)
+    return data.values.tolist(), big_test_onehot
+
+
+def fibonacci(n):
+    if n < 0:
+        print("Incorrect input")
+        # First Fibonacci number is 0
+    elif n == 1:
+        return 0
+    # Second Fibonacci number is 1
+    elif n == 2:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+def fibonacci_range(fib_range):
+    return (fibonacci(n) for n in fib_range)

@@ -16,6 +16,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import OneHotEncoder
 import ssn
+from utils import fibonacci_range, prep_data
+
 VERBOSE = True
 
 
@@ -38,16 +40,11 @@ def split_dataset(dataset):
 
 if __name__ == "__main__":
     df = load_dataset(verbose=VERBOSE)
-    # print(df)
 
     X, y, z = split_dataset(df)
-    # print(X)
-    # print(z)
-    #print(y)
     z = z.replace(" ", "0.0", regex=True)
     z = z.apply(pd.to_numeric)
 
-    # print(z)
     X = pd.DataFrame(OneHotEncoder().fit_transform(X).toarray())
     y = pd.DataFrame(OneHotEncoder().fit_transform(np.array(y).reshape(-1, 1)).toarray()).loc[:, 1]
     X = pd.concat([X, z], axis=1)
@@ -59,22 +56,34 @@ if __name__ == "__main__":
     print("\n\n\n")
     print("printing x train")
     print(x_train)
-    print("pritning test")
+    print("printing test")
     print(y_train)
     print("Training models...")
-    s = ssn.SNN(2047, 1, 1000, 1000)
-    s.fit(x_train, y_train)
 
-    # for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
-    #     print("Training " + model.__name__)
-    #     model_ = model()
-    #     model_.fit(x_train, y_train)
-    #     print("Evaluating model:")
-    #     print("Training data:")
-    #     print(classification_report(y_train, model_.predict(x_train)))
-    #     print("Confusion matrix:")
-    #     print(confusion_matrix(y_train, model_.predict(x_train)))
-    #     print("Test data:")
-    #     print(classification_report(y_test, model_.predict(x_test)))
-    #     print("Confusion matrix:")
-    #     print(confusion_matrix(y_test, model_.predict(x_test)))
+    big_train, big_test_onehot = prep_data(x_train, y_train)
+
+    # layer count test
+    for i in fibonacci_range(range(2, 15)):
+        s = ssn.SNN(len(big_train[0]), len(big_test_onehot[0]), *(100 for _ in range(i)))
+        s.fit(x_train, y_train)
+        s.predict(x_test, y_test)
+
+    # layer size test
+    for i in fibonacci_range(range(2, 15)):
+        s = ssn.SNN(len(big_train[0]), len(big_test_onehot[0]), i, i)
+        s.fit(x_train, y_train)
+        s.predict(x_test, y_test)
+
+    for model in [DecisionTreeClassifier, GaussianNB, KNeighborsClassifier, SVC]:
+        print("Training " + model.__name__)
+        model_ = model()
+        model_.fit(x_train, y_train)
+        print("Evaluating model:")
+        print("Training data:")
+        print(classification_report(y_train, model_.predict(x_train)))
+        print("Confusion matrix:")
+        print(confusion_matrix(y_train, model_.predict(x_train)))
+        print("Test data:")
+        print(classification_report(y_test, model_.predict(x_test)))
+        print("Confusion matrix:")
+        print(confusion_matrix(y_test, model_.predict(x_test)))

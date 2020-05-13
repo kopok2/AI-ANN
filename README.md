@@ -105,15 +105,7 @@ Opisane są również kroki niezbędne do efektywnego użycia modeli w środowis
 # Analiza wpływu - liczba warstw
 
 
-
-
 # Analiza wpływu - liczba neuronów
-
-
-
-
-# Analiza wpływu - rodzaj funkcji aktywacji
-
 
 
 # Porównanie wyników - inne metody
