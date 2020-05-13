@@ -1,7 +1,8 @@
 from random import random
 import math
-
 import operator
+
+
 def mult_matr(a, b):
     x = a
     y = b

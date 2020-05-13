@@ -1,11 +1,8 @@
 from utils import *
-from pprint import pprint
 import operator
 from random import sample
-import copy
 # only to make input posible
 import pandas as pd
-from sklearn.model_selection import train_test_split
 
 class SNN(object):
     """"After all specifie network architecure for example
@@ -107,15 +104,17 @@ class SNN(object):
 
     def predict(self, test, target):
         corect = 0
+        outputvec = []
         for i in range(len(test)):
             self.fowardPropagate(test[i])
             out = hardPrediction(self.output)
+            outputvec.append(out)
             if out[0] == target[i][0]:
                 corect += 1
             print(f"output = {out}, target = {target[i]}")
         self.accuracy = float(corect) / len(test)
         print(f"accuracy = {self.accuracy}")
-
+        return outputvec
 
 if __name__ == "__main__":
     #data prep
