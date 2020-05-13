@@ -107,16 +107,18 @@ class SNN(object):
             print(f"Epoka numer {epoch + 1}")
 
     def predict(self, test, target):
+        outputvec = []
         correct = 0
         for i in range(len(test)):
             self.fowardPropagate(test[i])
             out = hardPrediction(self.output)
+            outputvec.append(out)
             if out[0] == target[i][0]:
                 correct += 1
             print(f"output = {out}, target = {target[i]}")
         self.accuracy = float(correct) / len(test)
         print(f"accuracy = {self.accuracy}")
-
+        return outputvec
 
 if __name__ == "__main__":
     # data prep
