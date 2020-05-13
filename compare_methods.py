@@ -76,7 +76,7 @@ if __name__ == "__main__":
         s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), i, i)
         s.fit(ssn_x_train, ssn_y_train)
         s.predict(ssn_x_test, ssn_y_test)
-        print(s.accuracy)
+        f.write(f"{i},{s.accuracy}")
 
     f.close()
 

@@ -3,9 +3,8 @@ from pprint import pprint
 import operator
 from random import sample
 import copy
-# only to make input posible
+# only to make input possible
 import pandas as pd
-from sklearn.model_selection import train_test_split
 
 
 class SNN(object):
