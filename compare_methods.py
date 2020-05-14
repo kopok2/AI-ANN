@@ -16,7 +16,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import OneHotEncoder
 import ssn
-from utils import fibonacci_range, prep_test_data_y, prep_test_data_x
+from utils import fibonacci_range, prep_data, prep_test_data_y, prep_test_data_x
 
 VERBOSE = True
 
@@ -55,40 +55,28 @@ if __name__ == "__main__":
 
     print("Training models...")
 
-    ssn_y_train = prep_test_data_y(y_train[:10])
-    ssn_y_test = prep_test_data_y(y_test[:10])
-    ssn_x_train = prep_test_data_x(x_train[:10])
-    ssn_x_test = prep_test_data_x(x_test[:10])
+    ssn_y_train = prep_test_data_y(y_train)
+    ssn_y_test = prep_test_data_y(y_test)
+    ssn_x_train = prep_test_data_x(x_train)
+    ssn_x_test = prep_test_data_x(x_test)
 
-    f = open("compare/layer_count_test.csv", "w")
-    f.write("layers,accuracy\n")
-    for i in fibonacci_range(range(3, 15)):
+    f = open("layer_count_test.csv", "w")
+    f.write("layers,accuracy")
+    for i in fibonacci_range(range(2, 15)):
         s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), *(100 for _ in range(i)))
         s.fit(ssn_x_train, ssn_y_train)
         s.predict(ssn_x_test, ssn_y_test)
-        f.write(f"{i},{s.accuracy}\n")
+        f.write(f"{i},{s.accuracy}")
 
     f.close()
 
-    f = open("compare/layer_size_test.csv", "w")
-    f.write("size,accuracy\n")
-    for i in fibonacci_range(range(3, 15)):
+    f = open("layer_size_test.csv", "w")
+    f.write("size,accuracy")
+    for i in fibonacci_range(range(2, 15)):
         s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), i, i)
         s.fit(ssn_x_train, ssn_y_train)
         s.predict(ssn_x_test, ssn_y_test)
-        f.write(f"{i},{s.accuracy}\n")
-
-    f.close()
-
-    f = open("compare/activation_method_test.csv", "w")
-    f.write("method,accuracy\n")
-    for method in ["sigmoid"]:
-        s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), 100, 100)
-        print(method)
-        s.activation = method
-        s.fit(ssn_x_train, ssn_y_train)
-        s.predict(ssn_x_test, ssn_y_test)
-        f.write(f"{method},{s.accuracy}\n")
+        print(s.accuracy)
 
     f.close()
 

@@ -14,8 +14,8 @@ class SNN(object):
     def __init__(self, input_size, output_size, *args):
         # basic parameters
         self.activation = "sigmoid"
-        self.batch = 10
-        self.learningRate = 0.05
+        self.batch = 4
+        self.learningRate = 1
         self.epoch = 5
 
         # idealization of structure
@@ -25,6 +25,8 @@ class SNN(object):
         self.bias = []
         self.feedfowardInput = []
         self.accual = []
+        self.confmatrix = []
+        self.outputvector = []
 
         # init of weights
         self.weigth.append(base_initializer(input_size, self.hidden[0], random))
@@ -125,16 +127,14 @@ class SNN(object):
                 self.accual = []
 
     def predict(self, test, target):
-        outputvec = []
-        correct = 0
         for i in range(len(test)):
             self.fowardPropagate(test[i])
             out = hardPrediction(self.output)
-            outputvec.append(out)
-            if out[0] == target[i][0]:
-                correct += 1
-        self.accuracy = float(correct) / len(test)
-        return outputvec
+            self.outputvector.append(out)
+        self.confmatrix = create_conf_matrix(decode(target), decode(self.outputvector), 2)
+        self.accuracy = calc_accuracy(self.confmatrix)
+        return self.outputvector
+
 
 
 if __name__ == "__main__":
@@ -149,4 +149,6 @@ if __name__ == "__main__":
     s.fit(big_train[50:100], big_test_onehot[50:100])
     # make prediction
     s.predict(big_train[:5], big_test_onehot[:5])
+    print(s.outputvector)
     print(s.accuracy)
+    pprint(s.confmatrix)

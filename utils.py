@@ -130,3 +130,19 @@ def fibonacci(n):
 
 def fibonacci_range(fib_range):
     return (fibonacci(n) for n in fib_range)
+
+
+def create_conf_matrix(expected, predicted, n_classes):
+    m = [[0] * n_classes for i in range(n_classes)]
+    for pred, exp in zip(predicted, expected):
+        m[pred][exp] += 1
+    return transpoze(m)
+
+
+def calc_accuracy(conf_matrix):
+    t = sum(sum(l) for l in conf_matrix)
+    return sum(conf_matrix[i][i] for i in range(len(conf_matrix))) / t
+
+
+def decode(vec):
+    return [1 if i[0] == 1 else 0 for i in vec]
