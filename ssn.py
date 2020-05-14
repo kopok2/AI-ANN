@@ -25,6 +25,7 @@ class SNN(object):
         self.weigth = []
         self.bias = []
         self.feedfowardInput = []
+        self.accual = []
 
         # init of weights
         self.weigth.append(base_initializer(input_size, self.hidden[0], random))
@@ -46,10 +47,23 @@ class SNN(object):
         if self.activation == "sigmoid":
             state = mult_matr(input, self.weigth[0])
             state = sigmoid(state)
+            self.accual.append(state)
             for i in range(1, len(self.weigth) - 1):
                 state = mult_matr(state, self.weigth[i])
                 state = add(state, self.bias[i])
                 state = sigmoid(state)
+                self.accual.append(state)
+            self.output = sigmoid(mult_matr(state, self.weigth[-1]))
+        elif self.activation == "relu":
+            state = mult_matr(input, self.weigth[0])
+            state = relu(state)
+            self.accual.append(state)
+            for i in range(1, len(self.weigth) - 1):
+                state = mult_matr(state, self.weigth[i])
+                state = add(state, self.bias[i])
+                state = relu(state)
+                self.accual.append(state)
+            # output sigmoid activated
             self.output = sigmoid(mult_matr(state, self.weigth[-1]))
         else:
             raise ValueError("No known activation function ")
@@ -61,7 +75,10 @@ class SNN(object):
         for i, j in zip(range(len(self.weigth) - 2, -1, -1), range(len(self.weigth) - 1)):
             if i == 0:
                 break
-            self.gradient.append(mult_matr(self.gradient[j], transpoze(self.weigth[i])))
+            # Gradient from previes layer times trazpoze matrix times derivative of ativation function
+            gradRaw = mult_matr(self.gradient[j], transpoze(self.weigth[i]))
+            self.gradient.append(
+                list(map(operator.mul, gradientCal(self.accual[i], self.activation), gradRaw)))
         # odwrocic liste bo ide po bakpropagcji
         self.gradient = self.gradient[::-1]
         self.gradient.append(self.delta)
@@ -79,16 +96,19 @@ class SNN(object):
             self.bias[i] = add(self.bias[i], scalarMult(self.gradient[i], self.learningRate))
 
     # calculate delta on output
+
+
     def calulateDelta(self, target):
-        error = list(map(operator.sub, self.output, target))
-        gradient = gradientCal(self.output, self.activation)
+        error = list(map(operator.sub, target, self.output))
+        gradient = gradientCal(self.output, "sigmoid")
         self.delta = list(map(operator.mul, gradient, error))
-        self.delta = list(map(lambda x: -x, self.delta))
+
 
     def fit(self, train, target):
         for epoch in range(self.epoch):
             for i, j in zip(sample(range(len(train)), len(train)), range(1, len(train) + 1)):
                 self.fowardPropagate(train[i])
+
                 self.backPropagate(target[i])
                 if j % self.batch == 0:
                     for k in range(len(self.gradient)):
@@ -103,6 +123,7 @@ class SNN(object):
                 # reset gradients
                 self.gradient = []
                 self.delta = []
+                self.accual = []
 
     def predict(self, test, target):
         outputvec = []
@@ -123,8 +144,10 @@ if __name__ == "__main__":
     big_train, big_test_onehot = prep_data(data)
 
     # define architecture
-    s = SNN(2049, 2, 5000, 5000, 5000, 5000)
+    s = SNN(2049, 2, 100, 100)
+    s.activation = "relu"
     # fit model
-    s.fit(big_train[50:60], big_test_onehot[50:60])
+    s.fit(big_train[50:100], big_test_onehot[50:100])
     # make prediction
     s.predict(big_train[:5], big_test_onehot[:5])
+    print(s.accuracy)
