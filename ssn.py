@@ -159,17 +159,9 @@ if __name__ == "__main__":
     data = pd.read_csv("bank_clean.csv")
     big_train, big_test_onehot = prep_data(data)
 
-    #
-    # # data prep
-    # data = pd.read_csv("bank_clean.csv")
-    # big_train, big_test_onehot = prep_data(data)
-    #
-    # #define architecture
-    # s = SNN(2049, 2, 100, 100)
-    # # fit model
-    # s.fit(big_train[50:100], big_test_onehot[50:100])
-    # # make prediction
-    # s.predict(big_train[:5], big_test_onehot[:5])
-    # print(s.outputvector)
-    # # print(s.accuracy)
-    # # pprint(s.confmatrix)
+    #define architecture
+    s = SNN(2049, 2, 100, 100)
+    # fit model
+    s.fit(big_train[50:100], big_test_onehot[50:100])
+    # make prediction
+    s.predict(big_train[:5], big_test_onehot[:5])
