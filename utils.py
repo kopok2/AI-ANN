@@ -34,11 +34,11 @@ def zero_initializer(rows, columns=1):
 
 
 def base_initializer(rows, columns, generator):
-    return [[generator() * 0.001 for i in range(columns)] for j in range(rows)]
+    return [[generator() for i in range(columns)] for j in range(rows)]
 
 
 def vector_initializer(size, generator):
-    return [generator() * 0.01 for i in range(size)]
+    return [generator() for i in range(size)]
 
 
 def sigmoid(vec):
@@ -146,3 +146,10 @@ def calc_accuracy(conf_matrix):
 
 def decode(vec):
     return [1 if i[0] == 1 else 0 for i in vec]
+
+
+def softmax(vec):
+    maks = max(vec)
+    vec = list(map(lambda x: x - maks, vec))
+    sum = math.fsum(list(map(math.exp, vec)))
+    return list(map(lambda x: x / sum, list(map(math.exp, vec))))

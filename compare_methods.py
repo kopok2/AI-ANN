@@ -6,6 +6,7 @@ Klasyfikacja - czy klient banku spłaci pożyczkę.
 Źródło danych: http://archive.ics.uci.edu/ml/machine-learning-databases/00350/
 """
 
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -17,6 +18,10 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import OneHotEncoder
 import ssn
 from utils import fibonacci_range, prep_data, prep_test_data_y, prep_test_data_x
+
+from tensorflow import keras
+import tensorflow as tf
+from tensorflow.keras import layers
 
 VERBOSE = True
 
@@ -49,34 +54,40 @@ if __name__ == "__main__":
     y = pd.DataFrame(OneHotEncoder().fit_transform(np.array(y).reshape(-1, 1)).toarray()).loc[:, 1]
     X = pd.concat([X, z], axis=1)
     out = pd.concat([X, z, y], axis=1)
-    out.to_csv('bank_clean.csv')
+    # out.to_csv('bank_clean.csv')
 
     x_train, x_test, y_train, y_test = train_test_split(X, y)
 
-    print("Training models...")
 
     ssn_y_train = prep_test_data_y(y_train)
     ssn_y_test = prep_test_data_y(y_test)
     ssn_x_train = prep_test_data_x(x_train)
     ssn_x_test = prep_test_data_x(x_test)
 
-    f = open("layer_count_test.csv", "w")
-    f.write("layers,accuracy")
-    for i in fibonacci_range(range(2, 15)):
-        s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), *(100 for _ in range(i)))
-        s.fit(ssn_x_train, ssn_y_train)
-        s.predict(ssn_x_test, ssn_y_test)
-        f.write(f"{i},{s.accuracy}")
+    # f = open("layer_count_test.csv", "w")
+    # f.write("layers,accuracy")
+    # for i in fibonacci_range(range(2, 8)):
+    #     s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), *(100 for _ in range(i)))
+    #     s.fit(ssn_x_train, ssn_y_train)
+    #     print("training data acc")
+    #     s.predict(ssn_x_train, ssn_y_train)
+    #     print(f"Skonczone dla i = {i}")
+    #     s.predict(ssn_x_test, ssn_y_test)
+    #     f.write(f"{i},{s.accuracy}\n")
+    #
+    # f.close()
 
-    f.close()
 
     f = open("layer_size_test.csv", "w")
     f.write("size,accuracy")
-    for i in fibonacci_range(range(2, 15)):
-        s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), i, i)
-        s.fit(ssn_x_train, ssn_y_train)
-        s.predict(ssn_x_test, ssn_y_test)
-        print(s.accuracy)
+
+    s = ssn.SNN(len(ssn_x_train[0]), len(ssn_y_train[0]), 100, 10)
+    s.fit(ssn_x_train, ssn_y_train)
+    print("accc dla trein")
+    s.predict(ssn_x_train, ssn_y_train)
+    print("acc dla test")
+    s.predict(ssn_x_test, ssn_y_test)
+    print(s.accuracy)
 
     f.close()
 
