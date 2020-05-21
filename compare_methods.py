@@ -19,10 +19,6 @@ from sklearn.preprocessing import OneHotEncoder
 import ssn
 from utils import fibonacci_range, prep_data, prep_test_data_y, prep_test_data_x
 
-from tensorflow import keras
-import tensorflow as tf
-from tensorflow.keras import layers
-
 VERBOSE = True
 
 
