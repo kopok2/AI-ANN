@@ -3,11 +3,15 @@ from pprint import pprint
 import operator
 from random import sample
 import copy
-# only to make input possible
+import re
+import csv
+import ast
+# only to make prediction possible
 import pandas as pd
 import time
-
-
+from sklearn.preprocessing import OneHotEncoder
+import numpy as np
+from sklearn.model_selection import train_test_split
 class SNN(object):
     """"After all specific network architecture for example
      SNN(input_size, output_size, 4,2) mans two hidden layers first size 4 second size 2"""
@@ -15,6 +19,7 @@ class SNN(object):
     def __init__(self, input_size, output_size, *args):
         # basic parameters
         self.activation = "relu"
+        self.outputactivation = "softmax"
         self.batch = 30
         self.learningRate = 0.5
         self.epoch = 5
@@ -38,6 +43,7 @@ class SNN(object):
             self.bias.append(vector_initializer(self.hidden[i], random))
         self.weigth.append(base_initializer(self.hidden[-1], output_size, random))
 
+        self.outputbias = vector_initializer(output_size, random)
         # back prop inti
         self.delta = []
         self.gradient = []
@@ -57,9 +63,12 @@ class SNN(object):
                 state = add(state, self.bias[i])
                 state = sigmoid(state)
                 self.accual.append(state)
-
-            self.output = softmax(mult_matr(state, self.weigth[-1]))
-            self.outputvectorTrain.append(self.output)
+            if self.outputactivation == "softmax":
+                self.output = softmax(add(mult_matr(state, self.weigth[-1]), self.outputbias))
+                self.outputvectorTrain.append(self.output)
+            elif self.outputactivation == "sigmoid":
+                self.output = sigmoid(add(mult_matr(state, self.weigth[-1]), self.outputbias))
+                self.outputvectorTrain.append(self.output)
         elif self.activation == "relu":
             state = mult_matr(input, self.weigth[0])
             state = relu(state)
@@ -70,10 +79,13 @@ class SNN(object):
                 state = add(state, self.bias[i])
                 state = relu(state)
                 self.accual.append(state)
-
             # output sigmoid activated
-            self.output = softmax(mult_matr(state, self.weigth[-1]))
-            self.outputvectorTrain.append(self.output)
+            if self.outputactivation == "softmax":
+                self.output = softmax(add(mult_matr(state, self.weigth[-1]), self.outputbias))
+                self.outputvectorTrain.append(self.output)
+            elif self.outputactivation == "sigmoid":
+                self.output = sigmoid(add(mult_matr(state, self.weigth[-1]), self.outputbias))
+                self.outputvectorTrain.append(self.output)
         else:
             raise ValueError("No known activation function ")
 
@@ -103,6 +115,9 @@ class SNN(object):
                 scalarMult(self.gradientmoment[i], self.momentum)))
 
     def updateBias(self):
+        self.outputbias = add(self.outputbias, add(
+            scalarMult(self.gradient[-1], self.learningRate),
+            scalarMult(self.gradientmoment[-1], self.momentum)))
         for i in range(len(self.bias)):
             self.bias[i] = add(self.bias[i], add(
                 scalarMult(self.gradient[i], self.learningRate),
@@ -149,19 +164,95 @@ class SNN(object):
             self.outputvector.append(out)
         self.confmatrix = create_conf_matrix(decode(target), decode(self.outputvector), 2)
         self.accuracy = calc_accuracy(self.confmatrix)
+        print("CONFUSION MATRIX\n")
         pprint(self.confmatrix)
-        print(self.accuracy)
+        print(f"accuracy = {self.accuracy}")
         return self.outputvector
 
+    def load_weight(self, file_name):
+        super().__init__()
+        # parsing name and seting structure
+        name = file_name.split(sep=",")
+        args = []
+        for arg in name:
+            args.append(re.sub('[^A-Za-z0-9]+', '', arg))
+        # setting architecure
+        arch = list(map(int, args[:-2]))
+        # add binary output
 
+        arch.insert(1, 2)
+        # print(arch)
+        self.__init__(*arch)
+        self.outputactivation = args[-1]
+        self.activation = args[-2]
+        # archiceture done now load the weigths
+        self.weigth = []
+        self.bias = []
+        with open(f"wgh/{file_name}.csv") as f:
+            csv_file = csv.reader(f, delimiter=",")
+            j = 0
+            for i, row in enumerate(csv_file, 0):
+                # print(row)
+                if i % 2 == 0:
+                    self.weigth.append(list(map(ast.literal_eval, list(row))))
+                else:
+                    self.bias.append(list(map(ast.literal_eval, list(row))))
+                if i % 2 == 1:
+                    j += 1
+            self.outputbias = self.bias[-1]
+            self.bias = self.bias[:-1]
+
+    def save_weight(self):
+
+        name = f"[{len(self.weigth[0])},{[len(w) for w in self.weigth[1:]]}]"
+        print(name)
+        ativation = (self.activation, self.outputactivation)
+
+        self.bias.append(self.outputbias)
+        with open(f"wgh/{name, *ativation}.csv", "w", newline="\n") as f:
+            writer = csv.writer(f)
+            writer.writerows(self.weigth)
+            writer.writerows(self.bias)
+
+
+def load_dataset(path="bank.csv", verbose=False):
+    print("Loading data...")
+    dataset = pd.read_csv(path, dtype=str)
+    if verbose:
+        print(dataset.head())
+        print(dataset.describe())
+    return dataset
+
+
+def split_dataset(dataset):
+    print("Spliting dataset...")
+    X = dataset.drop(['deposit', 'age', 'balance'], axis=1)
+    y = dataset['deposit']
+    z = dataset[['age', 'balance']]
+    return X, y, z
 
 if __name__ == "__main__":
-    data = pd.read_csv("bank_clean.csv")
-    big_train, big_test_onehot = prep_data(data)
+    df = load_dataset(verbose=False)
 
+    X, y, z = split_dataset(df)
+    z = z.replace(" ", "0.0", regex=True)
+    z = z.apply(pd.to_numeric)
+
+    X = pd.DataFrame(OneHotEncoder().fit_transform(X).toarray())
+    y = pd.DataFrame(OneHotEncoder().fit_transform(np.array(y).reshape(-1, 1)).toarray()).loc[:, 1]
+    X = pd.concat([X, z], axis=1)
+
+    x_train, x_test, y_train, y_test = train_test_split(X, y)
+
+    X = prep_test_data_x(x_test)
+    y = prep_test_data_y(y_test)
     #define architecture
-    s = SNN(2049, 2, 100, 100)
+    s = SNN(10, 10, 5)
+
+    s.load_weight("('[2047,[1000, 1000, 10]]', 'sigmoid', 'sigmoid')")
+    s.save_weight()
+
+# a = s.predict(X,y)
+
+#print(a)
     # fit model
-    s.fit(big_train[50:100], big_test_onehot[50:100])
-    # make prediction
-    s.predict(big_train[:5], big_test_onehot[:5])

@@ -87,7 +87,7 @@ def scalarMult(vec, scalar):
 
 
 def hardPrediction(vec):
-    return list(map(round, vec))
+    return [0, 1] if vec[0] > vec[1] else [1, 0]
 
 
 def prep_data(data):
