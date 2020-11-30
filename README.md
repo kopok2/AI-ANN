@@ -1,131 +1,91 @@
----
-title:
-- Elementy Sztucznej Inteligencji - sztuczne sieci neuronowe.
-author:
-- Mateusz Jakubczak, Krzysztof Olipra, Karol Oleszek
-theme:
-- Copenhagen
----
+# Artificial Intelligence - Artificial Neural Networks
+
+## Authors
+- Mateusz Jakubczak
+- Krzysztof Olipra
+- Karol Oleszek
+
+## Objective
+
+Will client open a deposit? - binary classification based on telemarketing data.
+
+## Structure
+
+Project structure:
+
+- bank.csv - UCI dataset
+- ssn.py - artificial neural network implementation
+- compare_methods.py - comparative study of alternative methods
+- compare_methods_report.txt - detailed report from comparative study
+
+## Dataset
+
+Data was downloaded from [open machine learning dataset repository](https://archive.ics.uci.edu/ml/datasets/Bank%2BMarketing).
+
+## Problem description
+
+Dataset was gathered from marketing activities of Portugeese commercial bank.
+
+Client cold calls was main marketing activity.
+
+Classification objective:
+
+- Predict whether client will open a deposit after telemarketing call
+
+## Client features
+
+- age
+- job
+- is married
+- education
+- has defaulted on loan
+- has mortgage
+- has loans
 
 
-# Projekt SSN
+## Previous calls features
 
-Temat projektu:
+- has home phone
+- time from last contact
+- weekday of last contact
+- call time
 
+## Other features
 
-Czy klient założy lokatę? - klasyfikacja binarna w oparciu o dane telemarketingowe
+- number of previous client calls
+- were previous calls successful
 
+## Macroeconomic features
 
-# Struktura projektu
-
-Struktura projektu:
-
-- bank.csv dane z UCI
-- compare_methods.py porównanie z innymi metodami
-- compare_methods_report.txt dokładny raport z porównania
-
-
-# Dane
-
-Dane pochodzą z otwartego repozytorium zbiorów danych do uczenia maszynowego.
-
-
-Link: https://archive.ics.uci.edu/ml/datasets/Bank%2BMarketing
-
-
-
-# Opis problemu
-
-Użyte dane pochodzą z działań marketingowych anonimowego Portugalskiego banku.
-Kampanie marketingowe opierały się na telefonach do klientów.
-
-
-Celem klasyfikacji jest przewidzenie, czy klient założy lokatę po telefonie telemarketera.
-
-
-
-# Opis problemu - zmienne
-
-Dane o kliencie:
-
-- wiek
-- praca
-- stan cywilny
-- edukacja
-- czy jest bankrutem
-- czy ma hipotekę
-- czy ma pożyczki
-
-
-# Opis problemu - zmienne
-
-Dane o ostatnim kontakcie z telemarketerem:
-
-- czy telefon stacjonarny
-- miesiąc kontaktu
-- dzień tygodnia kontaktu
-- czas rozmowy
-
-
-# Opis problemu - zmienne
-
-Inne zmienne:
-
-- liczba poprzednich telefonów do klienta
-- dni od poprzedniego kontaktu
-- sukces poprzednich kontaktów
-
-
-# Opis problemu - zmienne
-
-Dane makroekonomiczne:
-
-- wariancja kwartalnego bezrobocia
-- CPI miesięczne
+- quarterly unemployment variance
+- monthly CPI
 - Consumer Confidence Index
-- stopa euribor 3
-- liczba zatrudnionych w gospodarce
+- euribor 3 rate
+- employees in economy
 
 
-# Przegląd literatury
+## Related work
 
 S. Moro, P. Cortez and P. Rita. A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems, Elsevier, 62:22-31, June 2014
 
 S. Moro, R. Laureano and P. Cortez. Using Data Mining for Bank Direct Marketing: An Application of the CRISP-DM Methodology. In P. Novais et al. (Eds.), Proceedings of the European Simulation and Modelling Conference - ESM'2011, pp. 117-121, Guimaraes, Portugal, October, 2011. EUROSIS. [bank.zip]
 
+## Other methods - comparative study
 
+Other approaches:
 
-# Przegląd literatury
-
-W podanych źródłach autorzy analizują strukturę zbioru danych, metody doboru zmiennych oraz porównują efektywność różnych technik uczenia maszynowego.
-Autorzy najwyższą efektywność osiągneli przy użyciu Support Vectors Machines.
-Opisane są również kroki niezbędne do efektywnego użycia modeli w środowisku biznesowym, m. in. poprzez wyjaśnialność modeli.
-
-
-# Analiza wpływu - liczba warstw
-
-
-# Analiza wpływu - liczba neuronów
-
-
-# Porównanie wyników - inne metody
-
-Do porównania wybraliśmy modele z Scikit-learn:
-
-- Drzewo decyzyjne
+- Decision trees
 - Naive Bayes
-- K-najbliższych sąsiadów
+- K-nearest neighbors
 - Support Vector Machines
 
 
 # Porównanie wyników - inne metody
 
-|Metoda|Poprawność(Accuracy)|
+|Method|Accuracy|
 |---|---|
-|SSN|x%|
-|Drzewo decyzyjne|68%|
+|SSN|64%|
+|Decision tree|68%|
 |Naive Bayes|68%|
 |KNN|60%|
 |SVC|58%|
-
-Pełen raport z klasyfikacji w pliku compare_methods_report.txt
